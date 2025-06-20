@@ -8,6 +8,21 @@
 // example.wlk
 // example.wlk
 // example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
+// example.wlk
 
 
 
@@ -104,4 +119,75 @@ object guerrero{
 object brujo{
   method extra() {}
   method esGroso(unPersonaje) = true
+}
+
+
+class Localidad{
+  var ejercito
+  method poderOfensivo() = ejercito.poderOfensivo()
+
+  method serOcupada(unEjercito){
+    
+  }
+}
+
+
+class Aldea inherits Localidad{
+
+  const maxTropa //deberia ser mayor a 10
+
+  method initialize(){
+    if(maxTropa < 10){
+      self.error("la poblacion debe ser mayor a 10")
+    }
+  }
+
+  //le pasamos el objeto completo
+  override method serOcupada(unEjercito){
+    if(maxTropa < unEjercito.tamano()){
+      ejercito = new Ejercito(tropa=unEjercito.losMasPoderoso())
+      unEjercito.quitarLosMasFuerte(ejercito)
+      ejercito = unEjercito.ejercitoMasFuerte()
+    }
+    else {
+      ejercito = unEjercito
+    }
+  }
+
+  
+}
+
+class Ciudad inherits Localidad{
+  override method poderOfensivo()= super()+300
+  override method serOcupada(unEjercito){
+    ejercito = unEjercito
+  }
+}
+
+
+//validar que el ejercito tenga minimo 10
+class Ejercito {
+  const tropa = []
+
+  method poderOfensivo()= tropa.sum({p=>p.potencialOfensivo()})
+
+  method invadir(unaLocalidad){
+    if(self.puedeInvadir(unaLocalidad)){
+      unaLocalidad.serOcupada(self)
+    }
+  }
+
+  method puedeInvadir(unaLocalidad){
+    return self.poderOfensivo() > unaLocalidad.poderDefensivo()
+  }
+
+  method tamano()= tropa.size()
+
+  method losMasPoderoso() = self.ordenadosLosMasPoderoso().take(10)
+
+  method ordenadosLosMasPoderoso()= tropa.sortBy({t1,t2 => t1.potencialOfensivo() > t2.potencialOfensivo()})
+
+  method quitarLosMasFuerte(ejercito){
+    tropa.removeAll(self.losMasPoderoso())
+  }
 }
